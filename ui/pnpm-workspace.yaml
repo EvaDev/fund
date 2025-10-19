@@ -1,0 +1,4 @@
+packages:
+  - 'fund-manager-app'
+  - 'beneficiary-app'
+  - 'shared'
