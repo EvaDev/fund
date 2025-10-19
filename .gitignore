@@ -1,1 +1,46 @@
-target
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+*.log
+dist/
+target/
+node_modules/
+.snfoundry_cache/
+
+# Python virtual environments
+starknet-env/
+venv/
+env/
+.venv/
+.env/
+
+# Python bytecode files
+__pycache__/
+*.pyc
+
+# Other common exclusions
+*.log
+*.pid
+*.seed
+*.DS_Store
