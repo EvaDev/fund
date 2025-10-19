@@ -1,0 +1,13 @@
+{
+  "name": "fund-ui-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@starknet-io/get-starknet": "^4.0.7",
+    "axios": "^1.9.0",
+    "starknet": "^7.6.4"
+  },
+  "devDependencies": {
+    "vite": "^6.3.4"
+  }
+}
