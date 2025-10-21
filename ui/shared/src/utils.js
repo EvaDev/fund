@@ -1,24 +1,32 @@
 import { RpcProvider, Contract, shortString, uint256, CallData } from 'starknet';
-import { CONTRACT_ADDRESSES, RPC_CONFIG } from './constants';
+
+// Placeholder constants - replace with actual values when contracts are deployed
+const CONTRACT_ADDRESSES = {
+  fund: '0x0',
+  beneficiary: '0x0',
+  investment: '0x0',
+  payout: '0x0'
+};
+
+const RPC_CONFIG = {
+  nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_KEY',
+  chainId: 'SN_GOERLI'
+};
 
 // Utility functions for fund management
 export const formatTokenAmount = (amount, decimals = 18) => {
   return (Number(amount) / Math.pow(10, decimals)).toFixed(6);
 };
 
-export const parseTokenAmount = (amount, decimals = 18) => {
-  return (Number(amount) * Math.pow(10, decimals)).toString();
-};
-
-export const formatCurrency = (amount, currency = 'USD') => {
+export const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: currency
+    currency: 'USD'
   }).format(amount);
 };
 
 export const formatDate = (timestamp) => {
-  return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+  return new Date(timestamp).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -26,6 +34,11 @@ export const formatDate = (timestamp) => {
     minute: '2-digit'
   });
 };
+
+export const parseTokenAmount = (amount, decimals = 18) => {
+  return (Number(amount) * Math.pow(10, decimals)).toString();
+};
+
 
 export const formatAddress = (address) => {
   if (!address) return '';

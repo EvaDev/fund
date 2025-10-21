@@ -1,0 +1,205 @@
+[
+  {
+    "type": "constructor",
+    "name": "constructor",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "_ping_interval",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "fund_contract",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "actor_contract",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "get_fund_address",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "set_fund_address",
+    "inputs": [
+      {
+        "name": "new_addr",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "get_owner",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "set_owner",
+    "inputs": [
+      {
+        "name": "new_owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "get_actor_contract_address",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "set_actor_contract_address",
+    "inputs": [
+      {
+        "name": "new_addr",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "struct",
+    "name": "fund::shared::PayoutPrefs",
+    "members": [
+      {
+        "name": "stable_pct",
+        "type": "core::integer::u8"
+      },
+      {
+        "name": "bitrefill_pct",
+        "type": "core::integer::u8"
+      },
+      {
+        "name": "token_pct",
+        "type": "core::integer::u8"
+      },
+      {
+        "name": "token_addr",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "add_beneficiary",
+    "inputs": [
+      {
+        "name": "addr",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "share",
+        "type": "core::integer::u8"
+      },
+      {
+        "name": "prefs",
+        "type": "fund::shared::PayoutPrefs"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "ping",
+    "inputs": [],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "function",
+    "name": "trigger_claim",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "event",
+    "name": "fund::shared::BeneficiaryAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "key"
+      },
+      {
+        "name": "beneficiary_addr",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "fund::shared::InheritanceTriggered",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "key"
+      },
+      {
+        "name": "beneficiary_addr",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "fund::beneficiary::Beneficiary::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "BeneficiaryAdded",
+        "type": "fund::shared::BeneficiaryAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "InheritanceTriggered",
+        "type": "fund::shared::InheritanceTriggered",
+        "kind": "nested"
+      }
+    ]
+  }
+]

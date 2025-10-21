@@ -19,10 +19,19 @@
 
 #[starknet::contract]
 mod Fund {
-    use super::super::shared::{FundData, DepositMade, WithdrawalMade, FundCreated, IOracleDispatcher, IOracleDispatcherTrait, IERC20Dispatcher, IERC20DispatcherTrait, BTC_USD_ID, ETH_USD_ID, USDC_USD_ID, USDE_USD_ID, PRAGMA_DECIMALS};
+    use super::super::shared::{FundData, DepositMade, WithdrawalMade, FundCreated, 
+        //IOracleDispatcher, IOracleDispatcherTrait,  // TEMPORARILY DISABLED
+        IERC20Dispatcher, IERC20DispatcherTrait, 
+        IActorDispatcher, IActorDispatcherTrait,
+        //BTC_USD_ID, ETH_USD_ID, USDC_USD_ID, USDE_USD_ID,
+        //PRAGMA_DECIMALS  // TEMPORARILY DISABLED
+        };
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess, StoragePointerWriteAccess};
     use core::num::traits::Pow;
+    use core::num::traits::Zero;
+    use core::array::ArrayTrait;
+    use core::array::Array;
 
 
     #[storage]
@@ -31,8 +40,12 @@ mod Fund {
         balances: Map<(ContractAddress, ContractAddress), u256>,  // (owner, token) => balance
         token_whitelist: Map<ContractAddress, bool>,  // token_addr => allowed
         token_asset_ids: Map<ContractAddress, felt252>,  // token_addr => Pragma asset_id (e.g., ETH/USD)
+        // Keep an ordered list of whitelisted tokens for iteration
+        token_list: Map<u32, ContractAddress>,
+        token_count: u32,
         oracle_dispatcher: ContractAddress,  // Pragma oracle address
-        owner: ContractAddress,  // Simple owner field
+        owner: ContractAddress,  // Contract owner
+        actor_contract_address: ContractAddress,  // optional actor registry
     }
 
     #[event]
@@ -44,16 +57,15 @@ mod Fund {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress, oracle_addr: ContractAddress, whitelist_tokens: Array<(ContractAddress, felt252)>) {  // (token, asset_id)
+    fn constructor(ref self: ContractState, owner: ContractAddress, 
+        oracle_addr: ContractAddress, 
+        actor_contract: ContractAddress) {
         self.owner.write(owner);
         self.oracle_dispatcher.write(oracle_addr);
-        let mut i = 0;
-        while i < whitelist_tokens.len() {
-            let (token, asset_id) = whitelist_tokens.at(i);
-            self.token_whitelist.write(*token, true);
-            self.token_asset_ids.write(*token, *asset_id);
-            i += 1;
-        }
+        self.actor_contract_address.write(actor_contract);
+        
+        // No hardcoded tokens - they will be added via set_token_asset_id function after deployment
+        self.token_count.write(0);
     }
 
     #[external(v0)]
@@ -78,14 +90,14 @@ mod Fund {
         let old_balance = self.balances.read((caller, token));
         self.balances.write((caller, token), old_balance + amount);
 
-        // Update total_value with oracle
-        let asset_id = self.token_asset_ids.read(token);
-        let added_value = if asset_id == 0 { 0 } else {
-            let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
-            let price = oracle.get_price(token);
-            (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
-        };
-        fund.total_value += added_value;
+        // Update total_value with oracle - TEMPORARILY DISABLED
+        // let asset_id = self.token_asset_ids.read(token);
+        // let added_value = if asset_id == 0 { 0 } else {
+        //     let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
+        //     let price = oracle.get_price(token);
+        //     (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
+        // };
+        // fund.total_value += added_value;
 
         self.funds.write(caller, fund);
 
@@ -105,14 +117,14 @@ mod Fund {
 
         self.balances.write((caller, token), balance - amount);
 
-        // Update total_value
-        let asset_id = self.token_asset_ids.read(token);
-        let subtracted_value = if asset_id == 0 { 0 } else {
-            let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
-            let price = oracle.get_price(token);
-            (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
-        };
-        fund.total_value -= subtracted_value;
+        // Update total_value - TEMPORARILY DISABLED
+        // let asset_id = self.token_asset_ids.read(token);
+        // let subtracted_value = if asset_id == 0 { 0 } else {
+        //     let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
+        //     let price = oracle.get_price(token);
+        //     (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
+        // };
+        // fund.total_value -= subtracted_value;
 
         self.funds.write(caller, fund);
 
@@ -144,13 +156,126 @@ mod Fund {
         token_dispatcher.transfer(to, amount);
 
         self.balances.write((owner, token), balance - amount);
-        let asset_id = self.token_asset_ids.read(token);
-        let subtracted_value = if asset_id == 0 { 0 } else {
-            let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
-            let price = oracle.get_price(token);
-            (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
-        };
-        fund.total_value -= subtracted_value;
+        // let asset_id = self.token_asset_ids.read(token);
+        // let subtracted_value = if asset_id == 0 { 0 } else {
+        //     let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
+        //     let price = oracle.get_price(token);
+        //     (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
+        // };
+        // fund.total_value -= subtracted_value;
+        self.funds.write(owner, fund);
+    }
+
+    #[external(v0)]
+    fn get_fund_data(ref self: ContractState, owner: ContractAddress) -> FundData {
+        self.funds.read(owner)
+    }
+
+    // Helpers to iterate tokens
+    #[external(v0)]
+    fn get_token_count(ref self: ContractState) -> u32 { self.token_count.read() }
+
+    #[external(v0)]
+    fn get_token_by_index(ref self: ContractState, index: u32) -> ContractAddress { self.token_list.read(index) }
+
+    // Convenience view for front-end: return all whitelisted tokens
+    #[external(v0)]
+    fn get_whitelisted_tokens(ref self: ContractState) -> Array<ContractAddress> {
+        let count = self.token_count.read();
+        let mut tokens: Array<ContractAddress> = ArrayTrait::new();
+        let mut idx: u32 = 0;
+        while idx < count {
+            let token = self.token_list.read(idx);
+            tokens.append(token);
+            idx += 1;
+        }
+        tokens
+    }
+
+    // Admin helpers for oracle address (in case oracle redeployed) - TEMPORARILY DISABLED
+    // #[external(v0)]
+    // fn get_oracle_address(ref self: ContractState) -> ContractAddress { self.oracle_dispatcher.read() }
+
+    // Only owner can rotate oracle
+    // #[external(v0)]
+    // fn set_oracle_address(ref self: ContractState, new_addr: ContractAddress) {
+    //     assert(self.owner.read() == get_caller_address(), 'Not owner');
+    //     self.oracle_dispatcher.write(new_addr);
+    // }
+
+    // Actor registry address rotation
+    #[external(v0)]
+    fn get_actor_contract_address(ref self: ContractState) -> ContractAddress { self.actor_contract_address.read() }
+
+    #[external(v0)]
+    fn set_actor_contract_address(ref self: ContractState, new_addr: ContractAddress) {
+        assert(self.owner.read() == get_caller_address(), 'Not owner');
+        self.actor_contract_address.write(new_addr);
+    }
+
+    // Set asset ID for a whitelisted token (owner only)
+    #[external(v0)]
+    fn set_token_asset_id(ref self: ContractState, token: ContractAddress, asset_id: felt252) {
+        assert(self.owner.read() == get_caller_address(), 'Not owner');
+        assert(self.token_whitelist.read(token), 'Token not whitelisted');
+        self.token_asset_ids.write(token, asset_id);
+    }
+
+    // Role check helper (owner or actor with permission)
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        fn restrict_to_actors(self: @ContractState) {
+            let caller = get_caller_address();
+            if caller == self.owner.read() { return; }
+            let actor_dispatcher = IActorDispatcher { contract_address: self.actor_contract_address.read() };
+            let actor = actor_dispatcher.get_actor(caller);
+            assert(actor.actor_address.is_non_zero(), 'Caller not registered');
+            assert(actor.is_active, 'Caller is inactive');
+            assert(actor.can_modify_fund, 'No modify permission');
+        }
+    }
+
+    // Owner rotation (if needed)
+    #[external(v0)]
+    fn get_owner(ref self: ContractState) -> ContractAddress { self.owner.read() }
+
+    #[external(v0)]
+    fn set_owner(ref self: ContractState, new_owner: ContractAddress) {
+        assert(get_caller_address() == self.owner.read(), 'Not owner');
+        self.owner.write(new_owner);
+    }
+
+    // Transfer beneficiary share proportionally across all tokens
+    #[external(v0)]
+    fn transfer_beneficiary_share(ref self: ContractState, owner: ContractAddress, beneficiary: ContractAddress, share_percentage: u8) {
+        let mut fund = self.funds.read(owner);
+        let count = self.token_count.read();
+        let mut idx: u32 = 0;
+        while idx < count {
+            let token = self.token_list.read(idx);
+            let balance = self.balances.read((owner, token));
+            if balance > 0 {
+                // amount = balance * share / 100
+                let amount = (balance * share_percentage.into()) / 100_u256;
+                if amount > 0 {
+                    let mut token_dispatcher = IERC20Dispatcher { contract_address: token };
+                    token_dispatcher.transfer(beneficiary, amount);
+
+                    // update storage balance
+                    self.balances.write((owner, token), balance - amount);
+
+                    // adjust total value using oracle - TEMPORARILY DISABLED
+                    // let asset_id = self.token_asset_ids.read(token);
+                    // let subtracted_value = if asset_id == 0 { 0 } else {
+                    //     let oracle = IOracleDispatcher { contract_address: self.oracle_dispatcher.read() };
+                    //     let price = oracle.get_price(token);
+                    //     (amount * price) / 10_u256.pow(PRAGMA_DECIMALS.into())
+                    // };
+                    // fund.total_value -= subtracted_value;
+                }
+            }
+            idx += 1;
+        }
         self.funds.write(owner, fund);
     }
 }

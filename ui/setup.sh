@@ -27,3 +27,4 @@ echo ""
 echo "Apps will be available at:"
 echo "  Fund Manager: http://localhost:3001"
 echo "  Beneficiary: http://localhost:3002"
+

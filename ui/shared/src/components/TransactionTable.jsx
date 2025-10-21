@@ -73,3 +73,4 @@ const TransactionTable = ({ transactions, title = 'Transactions' }) => {
 };
 
 export default TransactionTable;
+

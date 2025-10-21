@@ -31,228 +31,370 @@ const FundManagerContent = () => {
     setActiveItem('funds');
   };
 
+  // Navigation items
+  const navItems = [
+    { key: 'dashboard', label: 'Dashboard' },
+    { key: 'funds', label: 'Funds' },
+    { key: 'beneficiaries', label: 'Beneficiaries' },
+    { key: 'investments', label: 'Investments' },
+    { key: 'payouts', label: 'Payouts' },
+    { key: 'transactions', label: 'Transactions' },
+  ];
+
+  const handleNavChange = (key) => {
+    setActiveItem(key);
+  };
+
   const renderDashboard = () => (
-    <div className="h-full">
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
       {/* Header */}
-      <div className="mb-6 pb-4 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ 
+          fontSize: '32px', 
+          fontWeight: 'bold', 
+          color: '#1f2937', 
+          marginBottom: '8px',
+          margin: 0
+        }}>
           Fund Manager Dashboard
         </h1>
-        <p className="text-gray-600 text-sm">
+        <p style={{ 
+          color: '#6b7280', 
+          fontSize: '16px',
+          margin: 0
+        }}>
           {isConnected ? `Connected as ${formatAddress(address)}` : 'Not Connected'}
         </p>
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+        gap: '24px',
+        marginBottom: '32px'
+      }}>
         {/* Left Column */}
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Fund Information</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total Value:</span>
-                <span className="font-medium">No fund created</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            padding: '24px'
+          }}>
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              marginBottom: '16px',
+              margin: '0 0 16px 0'
+            }}>
+              Fund Information
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Total Value:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>No fund created</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Status:</span>
-                <span className="font-medium">Not created</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Status:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>Not created</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Created:</span>
-                <span className="font-medium">N/A</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Created:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>N/A</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Last Updated:</span>
-                <span className="font-medium">N/A</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Last Updated:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>N/A</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Account Statistics</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total Deposits:</span>
-                <span className="font-medium">N/A</span>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            padding: '24px'
+          }}>
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              marginBottom: '16px',
+              margin: '0 0 16px 0'
+            }}>
+              Account Statistics
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Total Deposits:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>N/A</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Active Beneficiaries:</span>
-                <span className="font-medium">0</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Active Beneficiaries:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>0</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total Payouts:</span>
-                <span className="font-medium">N/A</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Total Payouts:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>N/A</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Balance:</span>
-                <span className="font-medium">N/A</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Balance:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>N/A</span>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Wallet Information</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Wallet Address:</span>
-                <span className="font-medium">
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            padding: '24px'
+          }}>
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              marginBottom: '16px',
+              margin: '0 0 16px 0'
+            }}>
+              Wallet Information
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Wallet Address:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>
                   {isConnected ? formatAddress(address) : 'Not connected'}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Role:</span>
-                <span className="font-medium">Fund Manager</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0',
+                borderBottom: '1px solid #f3f4f6'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Role:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>Fund Manager</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Network:</span>
-                <span className="font-medium">Starknet Testnet</span>
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                padding: '8px 0'
+              }}>
+                <span style={{ color: '#6b7280', fontWeight: '500' }}>Network:</span>
+                <span style={{ color: '#1f2937', fontWeight: '600' }}>Starknet Testnet</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="space-y-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Token Balances</h3>
-            <div className="text-center text-gray-500 py-4 text-sm">
-              No token balances available
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            padding: '24px'
+          }}>
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              marginBottom: '16px',
+              margin: '0 0 16px 0'
+            }}>
+              Token Balances
+            </h3>
+            <div style={{ 
+              textAlign: 'center', 
+              color: '#6b7280', 
+              padding: '32px 0'
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>💰</div>
+              <p style={{ margin: 0 }}>No token balances available</p>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-800 mb-3">Beneficiaries</h3>
-            <div className="text-center text-gray-500 py-4 text-sm">
-              No beneficiaries added
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb',
+            padding: '24px'
+          }}>
+            <h3 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1f2937', 
+              marginBottom: '16px',
+              margin: '0 0 16px 0'
+            }}>
+              Beneficiaries
+            </h3>
+            <div style={{ 
+              textAlign: 'center', 
+              color: '#6b7280', 
+              padding: '32px 0'
+            }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>👥</div>
+              <p style={{ margin: 0 }}>No beneficiaries added</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Transactions */}
-      <div className="mt-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
-          <h3 className="font-semibold text-gray-800 mb-3">Recent Transactions</h3>
-          <div className="text-center text-gray-500 py-4 text-sm">
-            No transactions found
-          </div>
+      {/* Recent Transactions - Full Width */}
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px'
+      }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          color: '#1f2937', 
+          marginBottom: '16px',
+          margin: '0 0 16px 0'
+        }}>
+          Recent Transactions
+        </h3>
+        <div style={{ 
+          textAlign: 'center', 
+          color: '#6b7280', 
+          padding: '32px 0'
+        }}>
+          <div style={{ fontSize: '32px', marginBottom: '8px' }}>📋</div>
+          <p style={{ margin: 0 }}>No transactions found</p>
         </div>
       </div>
     </div>
   );
 
   const renderFunds = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">My Funds</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          Create New Fund
-        </button>
-      </div>
-      
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Fund Details</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fund Name
-            </label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter fund name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Investment Strategy
-            </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="conservative">Conservative</option>
-              <option value="moderate">Moderate</option>
-              <option value="aggressive">Aggressive</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderDeposits = () => (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800">Deposits</h1>
-      
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Make Deposit</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Token
-            </label>
-            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="ETH">ETH</option>
-              <option value="BTC">BTC</option>
-              <option value="USDC">USDC</option>
-              <option value="USDE">USDE</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Amount
-            </label>
-            <input
-              type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0.00"
-            />
-          </div>
-        </div>
-        <button className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-          Deposit Funds
-        </button>
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '24px' }}>
+        My Funds
+      </h1>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <p style={{ color: '#6b7280' }}>No funds created yet</p>
       </div>
     </div>
   );
 
   const renderBeneficiaries = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-800">Beneficiaries</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-          Add Beneficiary
-        </button>
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '24px' }}>
+        Beneficiaries
+      </h1>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <p style={{ color: '#6b7280' }}>No beneficiaries added yet</p>
       </div>
-      
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Beneficiary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Wallet Address
-            </label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="0x..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Share Percentage
-            </label>
-            <input
-              type="number"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="25"
-              max="100"
-            />
-          </div>
-        </div>
-        <button className="mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-          Add Beneficiary
-        </button>
+    </div>
+  );
+
+  const renderInvestments = () => (
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '24px' }}>
+        Investments
+      </h1>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <p style={{ color: '#6b7280' }}>No investments made yet</p>
+      </div>
+    </div>
+  );
+
+  const renderPayouts = () => (
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '24px' }}>
+        Payouts
+      </h1>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <p style={{ color: '#6b7280' }}>No payouts scheduled yet</p>
+      </div>
+    </div>
+  );
+
+  const renderTransactions = () => (
+    <div style={{ padding: '24px', backgroundColor: '#f8f9fa', minHeight: '100vh' }}>
+      <h1 style={{ fontSize: '32px', fontWeight: 'bold', color: '#1f2937', marginBottom: '24px' }}>
+        Transactions
+      </h1>
+      <div style={{
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <p style={{ color: '#6b7280' }}>No transactions found</p>
       </div>
     </div>
   );
@@ -263,45 +405,32 @@ const FundManagerContent = () => {
         return renderDashboard();
       case 'funds':
         return renderFunds();
-      case 'deposits':
-        return renderDeposits();
       case 'beneficiaries':
         return renderBeneficiaries();
       case 'investments':
-        return <div className="text-center py-12"><h1 className="text-2xl font-bold text-gray-800">Investments - Coming Soon</h1></div>;
+        return renderInvestments();
       case 'payouts':
-        return <div className="text-center py-12"><h1 className="text-2xl font-bold text-gray-800">Payouts - Coming Soon</h1></div>;
-      case 'analytics':
-        return <div className="text-center py-12"><h1 className="text-2xl font-bold text-gray-800">Analytics - Coming Soon</h1></div>;
-      case 'settings':
-        return <div className="text-center py-12"><h1 className="text-2xl font-bold text-gray-800">Settings - Coming Soon</h1></div>;
+        return renderPayouts();
+      case 'transactions':
+        return renderTransactions();
       default:
         return renderDashboard();
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar
         activeItem={activeItem}
-        onItemClick={setActiveItem}
+        onItemClick={handleNavChange}
         userType="FUND_MANAGER"
         isConnected={isConnected}
         onConnectWallet={connectWallet}
         onRefresh={handleRefresh}
         onAddAction={handleAddFund}
       />
-      
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-6">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          ) : (
-            renderContent()
-          )}
-        </div>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {renderContent()}
       </div>
     </div>
   );

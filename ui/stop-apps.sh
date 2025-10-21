@@ -31,3 +31,4 @@ stop_app "beneficiary"
 pkill -f "vite --port" 2>/dev/null || true
 
 echo "All apps stopped"
+

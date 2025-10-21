@@ -27,3 +27,4 @@ echo "Beneficiary App: http://localhost:3002"
 echo ""
 echo "To stop the apps, run: ./stop-apps.sh"
 echo "Or manually kill the processes using the PIDs in the .pid files"
+

@@ -1,0 +1,149 @@
+This account owns all contracts 0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c
+export STARKNET_KEYSTORE=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner.json
+export STARKNET_ACCOUNT=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json
+password = bbb
+
+
+#ACTOR
+starkli declare \
+  target/dev/actor_Actor.contract_class.json \
+  --network=sepolia \
+  --l1-gas 200000
+
+starkli deploy \
+    0x01e13b934eddcb8696df77fd65c4a6d464b9960caaf2b806bbf71124ce179743 \
+    0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c \
+    --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json \
+    --l1-gas 10000 \
+    --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8 
+
+Actor deployed to 0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c
+
+jq '.abi' target/dev/actor_Actor.contract_class.json > ../fund/ABI/actorABI.json
+
+
+
+# Deploy Beneficiary Contract
+starkli declare \
+  target/dev/beneficiary_Beneficiary.contract_class.json \
+  --network=sepolia \
+  --l1-gas 200000
+
+hash, owner, ping interval, fund , actor
+starkli deploy \
+    0x060abfad418f00f1394f6e6c0f97a3eed10ec856acce3a04cbe7b2bb9611a68e \
+    0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c \
+    0 \
+    0x06f5e38dcac0654359067a0b9a28de0431afba4424f397dd75230008c19002d3 \
+    0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c \
+    --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json \
+    --l1-gas 10000 \
+    --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8 
+
+Beneficiary contract Deployed to 0x07e533f65d93e509e15bd2b98532844a34e8c073362ed1b8e5149d332adbce85
+
+jq '.abi' target/dev/beneficiary_Beneficiary.contract_class.json > ../fund/ABI/beneficiaryABI.json
+
+NB Set the class hash of the customAccount contract on the customer contract
+starkli invoke \
+  --network=sepolia \
+  0x07e533f65d93e509e15bd2b98532844a34e8c073362ed1b8e5149d332adbce85 \
+  set_fund \
+  0x065a0e76d276d97818b825ebfdaf56eb7c04083ce1ff8b8d9a0cd7b776aad32e
+
+
+###############################################################################
+# FUND
+###############################################################################
+starkli declare \
+  target/dev/fund_Fund.contract_class.json \
+  --network=sepolia \
+  --l1-gas 200000
+
+# constructor(owner, oracle_addr, actor_contract, whitelist_tokens:Array<(addr,felt)>)
+# For a single whitelist pair, encode as two felts: token_addr asset_id
+# Example ETH/USD selector: 19514442401534788
+
+# replace CLASS_HASH below after declare output
+FUND_CLASS_HASH=0x000fe767957b01c7580cc00ba5de866615d2a99d377fb15e9dd253b028bc4b20
+OWNER=0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c
+ORACLE=0x02fdfc7825dde6a771ed9ed39f7c67b032a0aad479a5f88fb3e8d6f13a3d8a6
+ACTOR=0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c
+TOKEN1=0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c7b05f3b3b3b3b3b3b3b3b  # WETH on Starknet Sepolia
+ASSET1=19514442401534788  # ETH/USD selector
+
+starkli deploy \
+  0x06f168e9e5e35b65a96c541deb98660b5a7068a1dbf3cd0333edf4fdbbeea932 \
+  0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c \
+  0x02fdfc7825dde6a771ed9ed39f7c67b032a0aad479a5f88fb3e8d6f13a3d8a6 \
+  0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c \
+  --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json \
+  --l1-gas 10000 \
+  --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+
+# Set FUND_ADDR from output
+FUND_ADDR=0x066adb88366a0b4c86c71568243bb6bc5e7494851b015c40ccbc3b5dde2c54a2
+
+jq '.abi' target/dev/fund_Fund.contract_class.json > ../fund/ABI/fundABI.json
+
+# Set asset ID for the token after deployment
+# starkli invoke $FUND_ADDR set_token_asset_id $TOKEN1 $ASSET1 --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+
+###############################################################################
+# INVEST
+###############################################################################
+starkli declare \
+  target/dev/invest_Invest.contract_class.json \
+  --network=sepolia \
+  --l1-gas 200000
+
+# constructor(owner, fund_addr, oracle_addr, actor_contract)
+INVEST_CLASS_HASH=0x...
+starkli deploy \
+  0x060c86d18f82661ad7bfaf1caf291325eaf5fd8311f010d310c47ae0bdd95813 \
+  0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c \
+  0x066adb88366a0b4c86c71568243bb6bc5e7494851b015c40ccbc3b5dde2c54a2 \
+  0x02fdfc7825dde6a771ed9ed39f7c67b032a0aad479a5f88fb3e8d6f13a3d8a6 \
+  0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c \
+  --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json \
+  --l1-gas 10000 \
+  --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+
+INVEST_ADDR=0x00a5067f6892b9f592b68ea9d17e25dbbaa449c241e92a116034a8df95de9619
+
+jq '.abi' target/dev/invest_Invest.contract_class.json > ../fund/ABI/investABI.json
+
+###############################################################################
+# PAYOUT
+###############################################################################
+starkli declare \
+  target/dev/payout_Payout.contract_class.json \
+  --network=sepolia \
+  --l1-gas 200000
+
+# constructor(owner, fund_addr, beneficiary_addr, actor_contract)
+PAYOUT_CLASS_HASH=0x03f053e2d3dcaefd9c1e106a27c113fded5a89916aa565d69db4c437c97fdfb2
+BENEFICIARY_ADDR=0x07e533f65d93e509e15bd2b98532844a34e8c073362ed1b8e5149d332adbce85
+
+starkli deploy \
+  0x03f053e2d3dcaefd9c1e106a27c113fded5a89916aa565d69db4c437c97fdfb2 \
+  0x0764a2fe39643b6ef291883d14676ebc09f3f27fbea24fbf49cfa7976f97bc4c \
+  0x066adb88366a0b4c86c71568243bb6bc5e7494851b015c40ccbc3b5dde2c54a2 \
+  0x07e533f65d93e509e15bd2b98532844a34e8c073362ed1b8e5149d332adbce85 \
+  0x023721cb0957a13d6928aa23cea5625c459ac1eb42beb3687b125c08486c397c \
+  --account=/Users/seanevans/Documents/ssp/cairo/accounts/nft_owner-account.json \
+  --l1-gas 10000 \
+  --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+
+PAYOUT_ADDR=0x05eb03bdf58b8855ff49d2b3b3b3702f5b559a496b365d02df6cea97b1924930
+
+jq '.abi' target/dev/payout_Payout.contract_class.json > ../fund/ABI/payoutABI.json
+
+###############################################################################
+# Sanity checks
+###############################################################################
+starkli call $FUND_ADDR get_oracle_address --network=sepolia --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+starkli call $FUND_ADDR get_actor_contract_address --network=sepolia --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+starkli call $INVEST_ADDR get_actor_contract_address --network=sepolia --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+starkli call $PAYOUT_ADDR get_actor_contract_address --network=sepolia --rpc=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
+

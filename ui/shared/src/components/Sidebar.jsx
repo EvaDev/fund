@@ -1,5 +1,22 @@
 import React from 'react';
-import { SIDEBAR_MENU_ITEMS } from '../constants';
+
+// Menu items for different user types
+const SIDEBAR_MENU_ITEMS = {
+  FUND_MANAGER: [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'funds', label: 'Funds', icon: '💰' },
+    { id: 'beneficiaries', label: 'Beneficiaries', icon: '👥' },
+    { id: 'investments', label: 'Investments', icon: '📈' },
+    { id: 'payouts', label: 'Payouts', icon: '💸' },
+    { id: 'transactions', label: 'Transactions', icon: '📋' }
+  ],
+  BENEFICIARY: [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'funds', label: 'My Funds', icon: '💰' },
+    { id: 'payouts', label: 'Payouts', icon: '💸' },
+    { id: 'transactions', label: 'History', icon: '📋' }
+  ]
+};
 
 const Sidebar = ({ 
   activeItem, 
@@ -13,20 +30,53 @@ const Sidebar = ({
   const menuItems = SIDEBAR_MENU_ITEMS[userType] || SIDEBAR_MENU_ITEMS.FUND_MANAGER;
 
   return (
-    <div className="w-64 bg-gray-50 border-r border-gray-200 h-screen flex flex-col">
+    <div style={{
+      width: '280px',
+      backgroundColor: '#f8f9fa',
+      borderRight: '1px solid #e5e7eb',
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
       {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-800">
+      <div style={{
+        padding: '24px',
+        borderBottom: '1px solid #e5e7eb'
+      }}>
+        <h1 style={{
+          fontSize: '20px',
+          fontWeight: 'bold',
+          color: '#1f2937',
+          margin: 0
+        }}>
           {userType === 'BENEFICIARY' ? 'Beneficiary' : 'Fund Manager'}
         </h1>
       </div>
 
       {/* Action Buttons */}
-      <div className="p-4 space-y-3">
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+      }}>
         {!isConnected ? (
           <button
             onClick={onConnectWallet}
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+            style={{
+              width: '100%',
+              backgroundColor: '#10b981',
+              color: 'white',
+              padding: '12px 16px',
+              borderRadius: '8px',
+              border: 'none',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
           >
             Connect Wallet
           </button>
@@ -34,14 +84,40 @@ const Sidebar = ({
           <>
             <button
               onClick={onRefresh}
-              className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+              style={{
+                width: '100%',
+                backgroundColor: '#10b981',
+                color: 'white',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#059669'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#10b981'}
             >
               Refresh
             </button>
             {onAddAction && (
               <button
                 onClick={onAddAction}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                style={{
+                  width: '100%',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#3b82f6'}
               >
                 Add Fund
               </button>
@@ -51,19 +127,52 @@ const Sidebar = ({
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 px-4 py-2">
-        <ul className="space-y-1">
+      <nav style={{
+        flex: 1,
+        padding: '0 16px 16px 16px'
+      }}>
+        <ul style={{
+          listStyle: 'none',
+          padding: 0,
+          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px'
+        }}>
           {menuItems.map((item) => (
-            <li key={item.id}>
+            <li key={item.id} style={{ margin: 0 }}>
               <button
                 onClick={() => onItemClick(item.id)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition-colors flex items-center space-x-3 ${
-                  activeItem === item.id
-                    ? 'bg-gray-200 text-gray-800 font-medium'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
-                }`}
+                style={{
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  backgroundColor: activeItem === item.id ? '#e5e7eb' : 'transparent',
+                  color: activeItem === item.id ? '#1f2937' : '#6b7280',
+                  fontSize: '14px',
+                  fontWeight: activeItem === item.id ? '500' : '400',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  if (activeItem !== item.id) {
+                    e.target.style.backgroundColor = '#f3f4f6';
+                    e.target.style.color = '#1f2937';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (activeItem !== item.id) {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#6b7280';
+                  }
+                }}
               >
-                <span className="text-lg">{item.icon}</span>
+                <span style={{ fontSize: '16px' }}>{item.icon}</span>
                 <span>{item.label}</span>
               </button>
             </li>
@@ -72,8 +181,15 @@ const Sidebar = ({
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500 text-center">
+      <div style={{
+        padding: '16px',
+        borderTop: '1px solid #e5e7eb'
+      }}>
+        <div style={{
+          fontSize: '12px',
+          color: '#9ca3af',
+          textAlign: 'center'
+        }}>
           Fund Management System v1.0
         </div>
       </div>

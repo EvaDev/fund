@@ -21,3 +21,4 @@ const InfoCard = ({ title, data, className = '' }) => {
 };
 
 export default InfoCard;
+
